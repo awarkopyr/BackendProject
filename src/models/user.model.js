@@ -28,7 +28,7 @@ const userSchema = new Schema(
             type: String, ///clouding url
             required: true,
         },
-        coverimage: {
+        coverImage: {
             type: String
         },
         watchhistory: [
