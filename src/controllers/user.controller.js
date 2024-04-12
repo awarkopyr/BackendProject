@@ -8,22 +8,22 @@ import { set } from "mongoose";
 // import mongoose from "mongoose";
 
 
-const generateAccessAndRefreshToken = async(userId) => {
+const generateAccessAndRefreshToken = async(userId) =>{
     try {
         const user = await User.findById(userId)
-        const refreshToken = user.generateRefreshToken()
         const accessToken = user.generateAccessToken()
+        const refreshToken = user.generateRefreshToken()
 
         user.refreshToken = refreshToken
-        await user.save( { validateBeforeSave: false})
+        await user.save({ validateBeforeSave: false })
 
         return {accessToken, refreshToken}
 
+
     } catch (error) {
-        throw new ApiError(500, 'Something went wrong')
+        throw new ApiError(500, "Something went wrong while generating referesh and access token")
     }
 }
-
 
 
 ////////////user register////////////////////
@@ -112,7 +112,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const {email, username, password} = req.body
 
-    if (!username || !email) {
+    if (!(username || email)) {
         throw new ApiError(400, "Username or Email is required")
     }
 
@@ -130,9 +130,9 @@ const loginUser = asyncHandler(async (req, res) => {
         throw new ApiError(401, "Password is not correct")
     }
 
-    const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id)
+    const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user)
 
-    const logedInUser = await user.findOne(user._id).select("-password -refreshToken")
+    const loggedInUser = await user.findById(user._id).select("-password -refreshToken")
 
     const options = { 
         httpOnly : true,
@@ -141,13 +141,13 @@ const loginUser = asyncHandler(async (req, res) => {
 
     return res
     .status(200)
-    .cookie("AccessToken", accessToken, option)
-    .cookie("RefreshToken", refreshToken, option)
+    .cookie("AccessToken", accessToken, options)
+    .cookie("RefreshToken", refreshToken, options)
     .json(
         new ApiResponse(
             200,
             {
-                user: logedInUser, accessToken, refreshToken
+                user: loggedInUser, accessToken, refreshToken
             },
             "User logged in Successfully"
         )

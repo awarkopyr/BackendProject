@@ -18,7 +18,7 @@ const fileUpload = async (localPath) => {
         })
         ///file has been uploded successfully///
         console.log("file has been uploded successfully", response.url);
-        fs.unlinkSync(localFilePath)
+        fs.unlinkSync(localPath)
         return response;
     } catch (error) {
         fs.unlinkSync(localPath) //remove the locally saved temporary file as the system failed
