@@ -130,9 +130,9 @@ const loginUser = asyncHandler(async (req, res) => {
         throw new ApiError(401, "Password is not correct")
     }
 
-    const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user)
+    const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id)
 
-    const loggedInUser = await user.findById(user._id).select("-password -refreshToken")
+    const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
     const options = { 
         httpOnly : true,
